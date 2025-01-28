@@ -145,6 +145,11 @@ class InternalModel<T extends SequelizeModel> {
       replacements: this._replacements,
       attributes: this._attributes,
     });
+
+    if (this.response === null) {
+      throw new Error("No encontrado");
+    }
+
     this.response = response;
     return this;
   }

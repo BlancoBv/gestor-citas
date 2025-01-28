@@ -11,10 +11,10 @@ export default class CitasModel extends Model<
   InferCreationAttributes<CitasModel>
 > {
   declare idCita: CreationOptional<number>;
-  declare idhorario: ForeignKey<number>;
+  declare idHorario: ForeignKey<number>;
   declare idCliente: ForeignKey<number | null>;
   declare fechaCita: string;
-  declare idservicio: string;
+  declare idServicio: string;
   declare createdAt: CreationOptional<string>;
   declare updatedAt: CreationOptional<string>;
 }
