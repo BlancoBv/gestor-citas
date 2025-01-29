@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const foundUser = await controller
     .setModel(Usuarios)
     .setWhereFilters({ usuario: body.user })
-    .setAttributes(["password", "idUsuario"])
+    .setAttributes(["password", "id", "usuario"])
     .getModelResult()
     .getOne()
     .then((res) => res.toRawJSON())

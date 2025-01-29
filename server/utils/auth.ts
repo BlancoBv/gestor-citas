@@ -25,14 +25,13 @@ const adapter = new Mysql2Adapter(pool, {
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
-    attributes: { secure: !process.dev, sameSite: "strict" },
+    attributes: { secure: !import.meta.dev, sameSite: "strict" },
   },
   sessionExpiresIn: new TimeSpan(12, "h"),
   getUserAttributes: (attributes) => {
-    const { nombres, apemat, apepat, idRol } = attributes;
-
+    const { nombre, idRol, apellidos } = attributes;
     return {
-      nombre_completo: `${nombres} ${apepat} ${apemat}`,
+      nombre_completo: `${nombre} ${apellidos}`,
       idRol,
     };
   },
@@ -46,8 +45,7 @@ declare module "lucia" {
 
   interface DatabaseUserAttributes {
     idRol: number;
-    nombres: string;
-    apepat: string;
-    apemat: string;
+    nombre: string;
+    apellidos: string;
   }
 }

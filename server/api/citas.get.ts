@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
         data: err,
       });
     });
+  console.log(event.context.user);
 
   return response;
 });
