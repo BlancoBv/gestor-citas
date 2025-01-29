@@ -1,0 +1,4 @@
+<template>ola
+
+    <NuxtPage />
+</template>
