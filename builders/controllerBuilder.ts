@@ -10,8 +10,13 @@ import {
   Transaction,
   type FindAttributeOptions,
   type InferAttributes,
+  type InferCreationAttributes,
+  type Optional,
 } from "sequelize";
-import type { MakeNullishOptional } from "sequelize/lib/utils";
+import {
+  type NullishPropertiesOf,
+  type MakeNullishOptional,
+} from "sequelize/lib/utils";
 
 interface Builder {
   setWhereFilters(filters: WhereOptions<Attributes<any>> | undefined): this;
@@ -84,7 +89,12 @@ export class ControllerBuilder<T extends SequelizeModel = SequelizeModel>
     return this;
   }
 
-  setBody(body: { [key in keyof Attributes<T>]: any }): this {
+  setBody(
+    body: Optional<
+      InferCreationAttributes<T>,
+      NullishPropertiesOf<InferCreationAttributes<T>>
+    >
+  ): this {
     this.modelInstance.body = body;
     return this;
   }
@@ -146,7 +156,7 @@ class InternalModel<T extends SequelizeModel> {
       attributes: this._attributes,
     });
 
-    if (this.response === null) {
+    if (response === null) {
       throw new Error("No encontrado");
     }
 
