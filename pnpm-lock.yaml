@@ -17,6 +17,9 @@ importers:
       '@primevue/nuxt-module':
         specifier: 4.2.5
         version: 4.2.5(@babel/parser@7.26.7)(magicast@0.3.5)(rollup@4.32.0)(vue@3.5.13(typescript@5.7.3))
+      '@primevue/themes':
+        specifier: ^4.2.5
+        version: 4.2.5
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -29,6 +32,9 @@ importers:
       nuxt:
         specifier: ^3.15.3
         version: 3.15.3(@parcel/watcher@2.5.1)(@types/node@22.10.10)(db0@0.2.3(mysql2@3.12.0))(ioredis@5.4.2)(magicast@0.3.5)(mysql2@3.12.0)(rollup@4.32.0)(terser@5.37.0)(typescript@5.7.3)(vite@6.0.11(@types/node@22.10.10)(jiti@2.4.2)(terser@5.37.0)(yaml@2.7.0))(yaml@2.7.0)
+      primevue:
+        specifier: ^4.2.5
+        version: 4.2.5(vue@3.5.13(typescript@5.7.3))
       sequelize:
         specifier: ^6.37.5
         version: 6.37.5(mysql2@3.12.0)
@@ -635,6 +641,10 @@ packages:
 
   '@primevue/nuxt-module@4.2.5':
     resolution: {integrity: sha512-/zs9pYCu81Le56l7HCz1AUv6g3eW17XLx3BNCeE3BcYxQAcwTP9rd9uUxvrRvigQABGoc21Ye+Wb02uv1/uRtg==}
+    engines: {node: '>=12.11.0'}
+
+  '@primevue/themes@4.2.5':
+    resolution: {integrity: sha512-8F7yA36xYIKtNuAuyBdZZEks/bKDwlhH5WjpqGGB0FdwfAEoBYsynQ5sdqcT2Lb/NsajHmS5lc++Ttlvr1g1Lw==}
     engines: {node: '>=12.11.0'}
 
   '@redocly/ajv@8.11.2':
@@ -4393,6 +4403,10 @@ snapshots:
       - rollup
       - supports-color
       - vue
+
+  '@primevue/themes@4.2.5':
+    dependencies:
+      '@primeuix/styled': 0.3.2
 
   '@redocly/ajv@8.11.2':
     dependencies:
