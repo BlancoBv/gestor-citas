@@ -1,14 +1,15 @@
 <script setup lang="ts">
 
-const { data, refresh, status } = useFetch("/api/citas")
+const { open: openSSE, close: closeSSE, status: sseStatus, data: sseData } =
+    useEventSource("http://192.168.100.4:3000/api/sse")
+
+
+const { data, refresh, status } = useFetch("/api/citas", { watch: [sseData] })
 const mess = ref<string>("hola")
-const sse = useEventSource("http://localhost:3000/api/sse")
 
 
 onMounted(() => {
-    sse.open()
-    const event = new EventSource("/api/sse")
-    /*     event.onmessage = (event) => {
+    openSSE()    /*     event.onmessage = (event) => {
             console.log(event)
         }
         event.onerror = () => {
@@ -17,12 +18,16 @@ onMounted(() => {
         }; */
 })
 
+onBeforeUnmount(() => {
+    closeSSE()
+})
 
 </script>
 
 <template>
     <!--  <Connection /> -->
-    {{ sse.status.value }}
-    {{ sse.data.value }}
+    {{ sseStatus }}
+    {{ sseData }}
     <span v-if="status === 'pending'" class="loading loading-spinner loading-lg "></span>
+    {{ data }}
 </template>

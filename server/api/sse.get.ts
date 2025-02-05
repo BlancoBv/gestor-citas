@@ -20,6 +20,7 @@
   event._handled = true;
 }); */
 export default defineEventHandler((event) => {
+  const { hooks } = useNitroApp();
   // Establecer el encabezado para SSE
   setHeader(event, "Content-Type", "text/event-stream");
   setHeader(event, "Cache-Control", "no-cache");
@@ -35,18 +36,23 @@ export default defineEventHandler((event) => {
     })}\n\n`
   );
   // Enviar eventos cada 2 segundos
-  const interval = setInterval(() => {
+  /*   const interval = setInterval(() => {
     stream.write(
       `data: ${JSON.stringify({
         message: "Hola desde SSE",
         timestamp: new Date(),
       })}\n\n`
     );
-  }, 2000);
+  }, 2000); */
 
+  const sendEvent = (data: any) => {
+    stream.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+
+  hooks.hook("sse:event", sendEvent);
   // Cerrar la conexión cuando el cliente se desconecte
   event.node.req.on("close", () => {
-    clearInterval(interval);
+    //clearInterval(interval);
     stream.end();
   });
 });
