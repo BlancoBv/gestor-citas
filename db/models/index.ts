@@ -7,6 +7,7 @@ import Usuarios from "./Usuarios";
 import Permisos from "./Permisos";
 import Roles from "./Roles";
 import RolesPermisos from "./RolesPermisos";
+import Servicios from "./Servicios";
 import bcrypt from "bcrypt";
 
 Usuarios.init(
@@ -49,6 +50,10 @@ Citas.init(
     idCliente: { type: DataTypes.INTEGER },
     fechaCita: { type: DataTypes.DATEONLY, allowNull: false },
     idServicio: { type: DataTypes.INTEGER },
+    estatus: {
+      type: DataTypes.ENUM("abierta", "por_llegar", "sala_espera"),
+      allowNull: false,
+    },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },
   },
@@ -66,6 +71,13 @@ Clientes.init(
     apellidos: { type: DataTypes.STRING(40), allowNull: false },
     numTelefono: { type: DataTypes.STRING(10), allowNull: false },
     edad: { type: DataTypes.INTEGER },
+    nombreCompleto: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const { nombre, apellidos } = this;
+        return `${nombre} ${apellidos}`;
+      },
+    },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },
   },
@@ -85,6 +97,18 @@ Horarios.init(
     updatedAt: { type: DataTypes.DATE },
   },
   { sequelize, tableName: "horarios" }
+);
+
+Servicios.init(
+  {
+    idServicio: { type: DataTypes.NUMBER, primaryKey: true, allowNull: false },
+    nombre: { type: DataTypes.STRING(20), allowNull: false },
+    descripcion: { type: DataTypes.TEXT("tiny"), allowNull: false },
+    createdAt: { type: DataTypes.DATE },
+    updatedAt: { type: DataTypes.DATE },
+    idPrecio: { type: DataTypes.NUMBER },
+  },
+  { sequelize, tableName: "servicios" }
 );
 
 Clientes.hasMany(Citas, { foreignKey: "idCliente" });

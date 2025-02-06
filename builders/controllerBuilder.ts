@@ -203,10 +203,28 @@ class InternalModel<T extends SequelizeModel> {
       transaction: this._transaction ?? undefined,
     });
   }
-  public toRawArray(): InferAttributes<T>[] {
-    return this.response as InferAttributes<T>[];
+  public toRawArray<
+    K extends { [key: string]: SequelizeModel | SequelizeModel[] }
+  >() {
+    const res = this.response as T[];
+    return res as unknown as (InferAttributes<T> & {
+      [P in keyof K]: K[P] extends SequelizeModel
+        ? InferAttributes<K[P]>
+        : K[P] extends SequelizeModel[]
+        ? InferAttributes<K[P][number]>[]
+        : never;
+    })[];
   }
-  public toRawJSON(): InferAttributes<T> {
-    return this.response as InferAttributes<T>;
+  public toRawJSON<
+    K extends { [key: string]: SequelizeModel | SequelizeModel[] }
+  >() {
+    const res = this.response as T;
+    return res as unknown as (InferAttributes<T> & {
+      [P in keyof K]: K[P] extends SequelizeModel
+        ? InferAttributes<K[P]>
+        : K[P] extends SequelizeModel[]
+        ? InferAttributes<K[P][number]>[]
+        : never;
+    })[];
   }
 }

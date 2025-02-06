@@ -15,6 +15,7 @@ export default class CitasModel extends Model<
   declare idCliente: ForeignKey<number | null>;
   declare fechaCita: string;
   declare idServicio: string;
+  declare estatus: string;
   declare createdAt: CreationOptional<string>;
   declare updatedAt: CreationOptional<string>;
 }

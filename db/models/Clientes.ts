@@ -14,6 +14,7 @@ export default class Clientes extends Model<
   declare apellidos: string;
   declare numTelefono: string;
   declare edad: number | null;
+  declare nombreCompleto: CreationOptional<string>;
   declare createdAt: string;
   declare updatedAt: string;
 }

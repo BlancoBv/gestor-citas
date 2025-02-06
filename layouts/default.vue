@@ -1,7 +1,7 @@
 <template>
     <div class="drawer">
         <input id="drawer" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content flex flex-col">
+        <div class="drawer-content flex flex-col w-screen h-screen">
             <div class="navbar bg-base-300 w-full">
                 <div class="flex-none lg:hidden">
                     <label for="drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
