@@ -2,7 +2,6 @@ import { z } from "zod";
 import { ControllerBuilder } from "~/builders/controllerBuilder";
 import { Citas, Clientes, Horarios } from "~/db/models";
 
-interface xd extends Citas {}
 const querySchema = z.object({
   estatus: z.enum(["abierta", "por_llegar", "sala_espera", "todas"]).optional(),
 });

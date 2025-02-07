@@ -54,6 +54,7 @@ Citas.init(
       type: DataTypes.ENUM("abierta", "por_llegar", "sala_espera"),
       allowNull: false,
     },
+    nombreCliente: { type: DataTypes.STRING(100) },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },
   },

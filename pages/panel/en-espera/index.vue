@@ -5,11 +5,11 @@ const { data, execute } = useFetch("/api/citas?estatus=sala_espera")
 </script>
 <template>
     <div class="grid grid-cols-3 h-full">
-        <div class="flex flex-col items-center col-span-2 p-4">
+        <div class="flex flex-col items-center col-span-2 p-4 gap-4">
             <div v-for="cita in data" class="stats shadow w-full">
                 <div class="stat place-items-center">
                     <div class="stat-title">Paciente</div>
-                    <div class="stat-value">{{ cita.clienteCita.nombreCompleto }}</div>
+                    <div class="stat-value">{{ cita.nombreCliente ?? cita.clienteCita.nombreCompleto }}</div>
                     <div class="stat-desc text-secondary">Hora: {{ cita.horarioCita.horaInicio }}</div>
                 </div>
                 <!--                 <div class="stat place-items-center">

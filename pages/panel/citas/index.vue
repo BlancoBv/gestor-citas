@@ -4,6 +4,14 @@ const DATE = new Date(Date.now())
 const estatusCita = ref<string>("todas")
 const body = reactive<{ mes: string, year: string, periodo: string }>({ mes: "", year: moment(DATE, "YYYY"), periodo: "" })
 const { data, status, refresh } = useFetch("/api/citas", { query: { estatus: estatusCita }, watch: false })
+const { data: dataHorarios, status: statusHorarios } = useFetch("/api/horarios")
+
+const horariosOptions = computed(() => {
+    if (statusHorarios.value === "success") {
+        return dataHorarios.value?.map(el => ({ value: el.idHorario, label: `${el.horaInicio}-${el.horaTermino}` }))
+    }
+    return []
+})
 
 const filtrarCita = () => {
     refresh()
@@ -44,6 +52,13 @@ const filtrarCita = () => {
                     <option value="mes">Mes (30 días)</option>
                 </select>
             </label>
+            <div class="form-control w-full max-w-xs">
+                <div class="label">
+                    <span class="label-text">Rango de tiempo</span>
+                </div>
+                <MultiSelect :options="horariosOptions" option-label="label" option-value="value" :maxSelectedLabels="3"
+                    display="chip" placeholder="Seleccione los horarios" />
+            </div>
         </div>
 
     </form>
@@ -65,10 +80,10 @@ const filtrarCita = () => {
     </form>
     <DataTable :value="data" paginator :rows="5" :loading="status === 'pending'">
         <Column header="Fecha de la cita" field="fechaCita" />
-        <Column header="Hora de la cita" field="horarioCita">
+        <Column header="Horario de la cita" field="horarioCita">
             <template #body="{ data, field }">{{ data[field].horaInicio }} a {{ data[field].horaTermino }}</template>
         </Column>
-        <Column header="Cliente" field="cliente">
+        <Column header="Cliente" field="nombreCliente">
             <template #body="{ data, field }">
                 <template v-if="data[field]">{{ data[field] }}</template>
                 <template v-else> {{ data.clienteCita.nombreCompleto }}</template>

@@ -16,6 +16,7 @@ export default class CitasModel extends Model<
   declare fechaCita: string;
   declare idServicio: string;
   declare estatus: string;
+  declare nombreCliente: string | null;
   declare createdAt: CreationOptional<string>;
   declare updatedAt: CreationOptional<string>;
 }
