@@ -4,7 +4,7 @@ import { Citas, Clientes, Horarios } from "~/db/models";
 
 interface xd extends Citas {}
 const querySchema = z.object({
-  estatus: z.enum(["abierta", "por_llegar", "sala_espera"]).optional(),
+  estatus: z.enum(["abierta", "por_llegar", "sala_espera", "todas"]).optional(),
 });
 
 export default defineEventHandler(async (event) => {
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     ])
     .setWhereFilters({
       ...(querys.success &&
-        querys.data.estatus && { estatus: querys.data.estatus }),
+        querys.data.estatus !== "todas" && { estatus: querys.data.estatus }),
     })
     .setAttributes({ exclude: ["idHorario", "idCliente", "idServicio"] })
     .getModelResult()
