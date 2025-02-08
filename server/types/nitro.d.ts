@@ -2,6 +2,6 @@ import type { NitroApp } from "nitropack/types";
 
 declare module "nitropack" {
   interface NitroRuntimeHooks {
-    "sse:event": (data: any) => void;
+    "sse:event": (data: { msg: { time: Date }; event: string }) => void;
   }
 }

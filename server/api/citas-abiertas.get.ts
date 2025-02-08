@@ -1,12 +1,14 @@
 import { z } from "zod";
 import ControllerBuilder from "../utils/builders/controllerBuilder";
-import { Citas, Clientes, Horarios } from "~/db/models";
+import { Citas, Horarios } from "~/db/models";
 
 const querySchema = z.object({
-  estatus: z.enum(["abierta", "por_llegar", "sala_espera", "todas"]).optional(),
+  fecha: z.string().date(),
 });
 
 export default defineEventHandler(async (event) => {
+  const { hooks } = useNitroApp();
+
   const querys = await getValidatedQuery(event, (body) =>
     querySchema.safeParse(body)
   );
@@ -19,28 +21,31 @@ export default defineEventHandler(async (event) => {
   const controller = new ControllerBuilder();
   const response = await controller
     .setModel(Citas)
+    .setWhereFilters({
+      ...(querys.success && {
+        fechaCita: querys.data.fecha,
+      }),
+    })
     .setIncludedModels([
-      {
-        model: Clientes,
-        as: "clienteCita",
-        attributes: { exclude: ["createdAt", "updatedAt"] },
-      },
       {
         model: Horarios,
         as: "horarioCita",
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+        attributes: ["horaInicio", "horaTermino"],
       },
     ])
-    .setWhereFilters({
-      ...(querys.success &&
-        querys.data.estatus !== "todas" && { estatus: querys.data.estatus }),
+    .setAttributes({
+      exclude: [
+        "idHorario",
+        "idCliente",
+        "idServicio",
+        "createdAt",
+        "updatedAt",
+        "nombreCliente",
+      ],
     })
-    .setAttributes({ exclude: ["idHorario", "idCliente", "idServicio"] })
     .getModelResult()
     .getAll()
-    .then((res) =>
-      res.toRawArray<{ clienteCita: Clientes; horarioCita: Horarios }>()
-    )
+    .then((res) => res.toRawArray<{ horarioCita: Horarios }>())
     .catch((err) => {
       console.log(err);
       throw createError({
@@ -50,12 +55,6 @@ export default defineEventHandler(async (event) => {
         data: err,
       });
     });
-
-  const data = {
-    toJSON() {
-      return { ...response };
-    },
-  };
 
   return response;
 });

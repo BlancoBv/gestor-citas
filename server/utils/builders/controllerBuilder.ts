@@ -6,12 +6,15 @@ import {
   type Order,
   type WhereOptions,
   Op,
+  fn,
+  col,
   type BindOrReplacements,
   Transaction,
   type FindAttributeOptions,
   type InferAttributes,
   type InferCreationAttributes,
   type Optional,
+  where,
 } from "sequelize";
 import {
   type NullishPropertiesOf,
@@ -45,15 +48,24 @@ type LimitedClass<M> = Omit<
   | "toRawJSON"
 >;
 
-export class ControllerBuilder<T extends SequelizeModel = SequelizeModel>
-  implements Builder
+export default class ControllerBuilder<
+  T extends SequelizeModel = SequelizeModel
+> implements Builder
 {
   private modelInstance: InternalModel<T>;
 
   public get Op() {
     return Op;
   }
-
+  public get Fn() {
+    return fn;
+  }
+  public get Col() {
+    return col;
+  }
+  public get Where() {
+    return where;
+  }
   constructor() {
     this.modelInstance = new InternalModel<T>();
   }
@@ -207,24 +219,24 @@ class InternalModel<T extends SequelizeModel> {
     K extends { [key: string]: SequelizeModel | SequelizeModel[] }
   >() {
     const res = this.response as T[];
-    return res as unknown as (InferAttributes<T> & {
+    return res.map((el) => el?.toJSON()) as unknown as (InferAttributes<T> & {
       [P in keyof K]: K[P] extends SequelizeModel
         ? InferAttributes<K[P]>
         : K[P] extends SequelizeModel[]
         ? InferAttributes<K[P][number]>[]
-        : never;
+        : {};
     })[];
   }
   public toRawJSON<
     K extends { [key: string]: SequelizeModel | SequelizeModel[] }
   >() {
     const res = this.response as T;
-    return res as unknown as (InferAttributes<T> & {
+    return res as unknown as InferAttributes<T> & {
       [P in keyof K]: K[P] extends SequelizeModel
         ? InferAttributes<K[P]>
         : K[P] extends SequelizeModel[]
         ? InferAttributes<K[P][number]>[]
-        : never;
-    })[];
+        : {};
+    };
   }
 }

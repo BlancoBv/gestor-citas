@@ -1,4 +1,4 @@
-import { ControllerBuilder } from "~/builders/controllerBuilder";
+import ControllerBuilder from "../utils/builders/controllerBuilder";
 import { Usuarios } from "~/db/models";
 import validatePassword from "../utils/validatePassword";
 

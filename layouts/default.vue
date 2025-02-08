@@ -1,4 +1,5 @@
 <template>
+    <NuxtLoadingIndicator />
     <div class="drawer">
         <input id="drawer" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col w-screen h-screen">
@@ -15,11 +16,12 @@
                 <div class="mx-2 flex-1 px-2">Nombre de la marca</div>
                 <div class="hidden flex-none lg:block">
                     <ul class="menu menu-horizontal">
-                        <li><a>Horarios</a></li>
+                        <li>
+                            <NuxtLink to="/horarios">Horarios</NuxtLink>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <!-- Page content here -->
             <slot />
         </div>
         <div class="drawer-side">

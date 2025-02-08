@@ -1,7 +1,6 @@
 //import { z } from "zod";
-import { ControllerBuilder } from "~/builders/controllerBuilder";
 import { Horarios } from "~/db/models";
-
+import ControllerBuilder from "../utils/builders/controllerBuilder";
 /* const querySchema = z.object({
   estatus: z.enum(["abierta", "por_llegar", "sala_espera", "todas"]).optional(),
 });
@@ -22,7 +21,7 @@ export default defineEventHandler(async (event) => {
     .setAttributes({ exclude: ["createdAt", "updatedAt"] })
     .getModelResult()
     .getAll()
-    .then((res) => res.toRawArray<{}>())
+    .then((res) => res.toRawArray())
     .catch((err) => {
       throw createError({
         statusCode: 400,
