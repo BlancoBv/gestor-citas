@@ -1,4 +1,5 @@
 <template>
+    <NuxtLoadingIndicator />
     <div class="drawer lg:drawer-open">
         <input id="drawer" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col">
@@ -26,8 +27,12 @@
             <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
             <ul class="menu bg-base-200 min-h-full w-80 p-4">
                 <!-- Sidebar content here -->
-                <li><a href="/panel">Inicio</a></li>
-                <li><a href="/panel/citas">Citas</a></li>
+                <li>
+                    <NuxtLink to="/panel">Inicio</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/panel/citas">Citas</NuxtLink>
+                </li>
             </ul>
         </div>
     </div>

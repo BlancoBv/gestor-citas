@@ -47,14 +47,15 @@ onBeforeUnmount(() => {
     {{ SSEData }}
     {{ event }}
 
-    <div class="prose max-w-full p-4 h-full">
+    <div class="prose max-w-full p-4 h-full flex flex-col">
         <h1>Citas disponibles</h1>
-        <p>Selecciona una fecha del calendario para observar las citas que quedan disponibles.</p>
-        <div class="not-prose grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center">
+        <p class="not-prose">Selecciona una fecha del calendario para observar las citas que quedan disponibles.</p>
+        <div
+            class="not-prose grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center md:place-items-start flex-grow">
             <DatePicker v-model="actualDate" mode="date" title-position="left" class="lg:col-span-2"
                 :disabled-dates="disabledDates" transparent borderless expanded />
 
-            <div class="grid grid-cols-1 items-center">
+            <div class="grid grid-cols-1 items-center overflow-y-auto">
                 <p>{{ formatDate(actualDate, "DD MMMM YYYY") }}</p>
                 <p v-if="status === 'success' && data!.length < 1">No hay citas abiertas para este día. Intenta con otro
                 </p>

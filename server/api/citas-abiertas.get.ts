@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
       ...(querys.success && {
         fechaCita: querys.data.fecha,
       }),
+      estatus: { [controller.Op.not]: "sala_espera" },
     })
     .setIncludedModels([
       {
@@ -41,10 +42,12 @@ export default defineEventHandler(async (event) => {
         "nombreCliente",
       ],
     })
+    .setOrderFilters([["horarioCita", "horaInicio", "ASC"]])
     .getModelResult()
     .getAll()
     .then((res) => res.toRawArray<{ horarioCita: Horarios }>())
     .catch((err) => {
+      console.log(err);
       throw createError({
         statusCode: 400,
         statusMessage: "Error al obtener citas",
