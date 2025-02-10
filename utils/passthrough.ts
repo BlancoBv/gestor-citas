@@ -14,7 +14,7 @@ const PT = {
     page: "btn btn-sm data-[p-active=true]:btn-secondary",
   },
   select: {
-    root: "input input-bordered flex gap-2 items-center justify-center w-fit",
+    root: "input input-bordered flex gap-2 items-center justify-center w-full",
     overlay: "menu bg-base-100 rounded-btn",
     label: "outline-none",
   },
@@ -31,7 +31,7 @@ const PT = {
   },
   contextmenu: {
     root: "menu bg-base-100 shadow rounded-btn",
-    itemlink: "flex gap-2",
+    itemlink: "flex gap-2 items-center",
   },
   textarea: {
     root: "textarea textarea-bordered",
@@ -49,6 +49,17 @@ const PT = {
   },
   chip: {
     root: "flex bg-base-200 gap-4 items-center p-1 rounded-btn",
+  },
+  dialog: {
+    root: "modal-box transform-none",
+    mask: { class: "bg-[#0006]" },
+    header: "grid grid-cols-2",
+    title: "text-lg font-bold",
+    headeractions: "flex items-center justify-end",
+    pcclosebutton: {
+      root: "btn btn-sm btn-circle btn-ghost text-center",
+      label: "hidden",
+    },
   },
 };
 export default PT;

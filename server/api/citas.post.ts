@@ -70,4 +70,5 @@ export default defineEventHandler(async (event) => {
   //console.log(body, citasLista, semanaMes);
 
   hooks.callHook("sse:event", { msg: { time: new Date() }, event: "XD" });
+  return { msg: "Citas añadidas correctamente" };
 });

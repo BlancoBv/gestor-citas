@@ -36,13 +36,13 @@ export default defineEventHandler(async (event) => {
         querys.data.estatus !== "todas" && { estatus: querys.data.estatus }),
     })
     .setAttributes({ exclude: ["idHorario", "idCliente", "idServicio"] })
+    .setOrderFilters([["fechaCita", "DESC"]])
     .getModelResult()
     .getAll()
     .then((res) =>
       res.toRawArray<{ clienteCita: Clientes; horarioCita: Horarios }>()
     )
     .catch((err) => {
-      console.log(err);
       throw createError({
         statusCode: 400,
         statusMessage: "Error al obtener citas",

@@ -7,8 +7,6 @@ const querySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const { hooks } = useNitroApp();
-
   const querys = await getValidatedQuery(event, (body) =>
     querySchema.safeParse(body)
   );
@@ -47,7 +45,6 @@ export default defineEventHandler(async (event) => {
     .getAll()
     .then((res) => res.toRawArray<{ horarioCita: Horarios }>())
     .catch((err) => {
-      console.log(err);
       throw createError({
         statusCode: 400,
         statusMessage: "Error al obtener citas",

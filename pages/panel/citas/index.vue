@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import Dialog from 'primevue/dialog';
+
 definePageMeta({ layout: "panel" })
 
 interface Body { mes: string, year: string, periodo: string, horarios: number[] }
+interface Cita { idCita?: number, fechaCita: string, horarioCita?: { horaTermino: string, horaInicio: string } }
 
 const DATE = new Date(Date.now())
 const MESES = [
@@ -18,16 +21,27 @@ const MESES = [
     { id: 11, nombre: "Noviembre" },
     { id: 12, nombre: "Diciembre" },
 ];
-
+const cmItems = [{
+    label: "Agendar cita", icon: "mdi:plus", command() {
+        //modalAgendar.value?.showModal()
+        visible.value = true
+    }
+}]
+const cm = useTemplateRef("cm");
+const selectedItem = ref<Cita | null>(null);
 const estatusCita = ref<string>("todas")
-const body = reactive<Body>({ mes: "", year: moment(DATE, "YYYY"), periodo: "", horarios: [] })
+const visible = ref<boolean>(false)
+const body = reactive<Body>({ mes: "", year: formatDate(DATE, "YYYY"), periodo: "", horarios: [] })
+const bodyAgendar = reactive<{ cliente: string | null | number, idServicio: number | null }>({ cliente: null, idServicio: null })
 
 const { data, status, refresh } = useFetch("/api/citas", { query: { estatus: estatusCita }, watch: false })
 const { execute } = useFetch("/api/citas", {
     method: "post", body, watch: false, immediate: false, onResponse(res) {
-        if (res.response.status == 200) refresh()
+        if (res.response.status == 200) { refresh() }
     }
 })
+const { data: dataClientes, status: statusClientes } = useFetch("/api/clientes")
+
 const { data: dataHorarios, status: statusHorarios } = useFetch("/api/horarios")
 
 const horariosOptions = computed(() => {
@@ -36,18 +50,71 @@ const horariosOptions = computed(() => {
     }
     return []
 })
+const clientesOptions = computed(() => {
+    if (statusClientes.value === "success") {
+        return dataClientes.value?.map(el => ({ label: el.nombreCompleto, value: el.idCliente }))
+    }
+    return []
+})
 
+
+const { execute: executeAgendar, data: dataCitaA } = await useAsyncData("agendarCita", () => {
+    return $fetch("/api/agendar-cita", {
+        method: "post", query: { idCita: selectedItem.value?.idCita },
+        body: { cliente: bodyAgendar.cliente, idServicio: bodyAgendar.idServicio },
+        onResponse(res) {
+            if (res.response.status === 200) {
+                visible.value = false
+                refresh()
+            }
+        }
+    })
+}, { immediate: false })
 const filtrarCita = () => {
     refresh()
 }
-
 const crearCita = () => {
     execute()
 }
-
+const agendarCita = () => {
+    executeAgendar()
+}
+const onRowContextMenu = (event: { originalEvent: Event }) => {
+    cm.value?.show(event.originalEvent);
+};
 
 </script>
 <template>
+    {{ selectedItem }}
+    <Dialog v-model:visible="visible" modal @hide="() => {
+        bodyAgendar.cliente = null
+        bodyAgendar.idServicio = null
+    }">
+        <form class="grid grid-cols-1 place-items-center gap-4" @submit.prevent="agendarCita">
+            <input v-model="bodyAgendar.cliente" />
+            <label class="form-control w-full max-w-xs">
+                <div class="label">
+                    <span class="label-text">Cliente</span>
+                </div>
+                <Select v-model="bodyAgendar.cliente" placeholder="Ingresa o selecciona el nombre un cliente"
+                    :options="clientesOptions" editable option-value="value" option-label="label" />
+
+            </label>
+            <label class="form-control w-full max-w-xs">
+                <div class="label">
+                    <span class="label-text">Cliente</span>
+                </div>
+                <Select v-model="bodyAgendar.idServicio" filter placeholder="Selecciona un servicio"
+                    :options="clientesOptions" option-value="value" option-label="label" />
+
+            </label>
+            <div class="flex justify-end gap-2 w-full">
+                <button class="btn btn-primary" type="submit"
+                    :disabled="bodyAgendar.cliente === null || bodyAgendar.idServicio === null">Enviar</button>
+            </div>
+
+        </form>
+    </Dialog>
     <form @submit.prevent="crearCita">
         Generar citas abiertas
         <div class="flex gap-4">
@@ -108,10 +175,18 @@ const crearCita = () => {
         </label>
         <button class="btn btn-primary">Filtrar</button>
     </form>
-    <DataTable :value="data" paginator :rows="5" :loading="status === 'pending'">
-        <Column header="Fecha de la cita" field="fechaCita" />
+
+    <ContextMenu ref="cm" :model="cmItems">
+        <template #itemicon="{ item }">
+            <Icon :name="item.icon ?? ''" />
+        </template>
+    </ContextMenu>
+    <DataTable v-model:contextMenuSelection="selectedItem" :value="data" paginator :rows="5"
+        :loading="status === 'pending'" @row-contextmenu="onRowContextMenu" context-menu>
+        <Column header="Fecha de la cita" field="fechaCita" sortable />
         <Column header="Horario de la cita" field="horarioCita">
-            <template #body="{ data, field }">{{ data[field].horaInicio }} a {{ data[field].horaTermino }}</template>
+            <template #body="{ data, field }">{{ data[field].horaInicio }} a {{ data[field].horaTermino
+                }}</template>
         </Column>
         <Column header="Cliente" field="nombreCliente">
             <template #body="{ data, field }">
@@ -134,3 +209,19 @@ const crearCita = () => {
     </DataTable>
 
 </template>
+<style>
+th[data-pc-section="headercell"] div {
+    display: flex;
+    gap: 1rem;
+}
+
+th[data-p-sortable-column="true"]:hover {
+
+    @apply bg-base-content/10 text-base-content/60 duration-200 ease-in cursor-pointer
+}
+
+th[data-p-sorted="true"] {
+
+    @apply bg-secondary text-secondary-content duration-200 ease-in cursor-pointer
+}
+</style>

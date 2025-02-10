@@ -216,16 +216,18 @@ class InternalModel<T extends SequelizeModel> {
     });
   }
   public toRawArray<
-    K extends { [key: string]: SequelizeModel | SequelizeModel[] }
+    K extends { [key: string]: SequelizeModel | SequelizeModel[] } | undefined
   >() {
     const res = this.response as T[];
-    return res.map((el) => el?.toJSON()) as unknown as (InferAttributes<T> & {
-      [P in keyof K]: K[P] extends SequelizeModel
-        ? InferAttributes<K[P]>
-        : K[P] extends SequelizeModel[]
-        ? InferAttributes<K[P][number]>[]
-        : {};
-    })[];
+    return res.map((el) => el?.toJSON()) as unknown as (K extends undefined
+      ? InferAttributes<T>
+      : InferAttributes<T> & {
+          [P in keyof K]: K[P] extends SequelizeModel
+            ? InferAttributes<K[P]>
+            : K[P] extends SequelizeModel[]
+            ? InferAttributes<K[P][number]>[]
+            : {};
+        })[];
   }
   public toRawJSON<
     K extends { [key: string]: SequelizeModel | SequelizeModel[] }

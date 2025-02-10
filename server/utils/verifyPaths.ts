@@ -13,7 +13,12 @@ export default class VerifyPath {
     {
       path: "api/citas",
       method: ["POST", "DELETE", "GET", "PUT"],
-      bypass: [/[?]idmiembro=\w+/],
+      bypass: [/[?]estatus=\w+/],
+    },
+    {
+      path: "api/citas-abiertas",
+      method: ["GET", "POST", "PUT", "DELETE"],
+      bypass: [/[?]fecha=\w+-\w+-\w+/],
     },
     /* {
       path: "api/articulos",
@@ -75,14 +80,16 @@ export default class VerifyPath {
 
   private findMatch() {
     return this.protectedRoutes.some((el) => {
-      const regExp = new RegExp(el.path);
+      const regExp = new RegExp(`^/?${el.path}(\\?.*)?$`);
       if (el.bypass) {
         const isBypass = el.bypass?.some((bypass) => {
           const regExp = new RegExp(bypass);
           return regExp.test(this.search);
         });
 
-        if (isBypass) return false;
+        if (isBypass) {
+          return false;
+        }
       }
       return regExp.test(this.url) && el.method.some((m) => m === this.method);
     });

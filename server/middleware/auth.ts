@@ -29,8 +29,8 @@ export default defineEventHandler(async (event) => {
       await sendRedirect(event, "/login");
     }
     if (event.path.match("/api/") && verifyPaths.isProtected()) {
-      setResponseStatus(event, 401);
-      return { msg: "No autorizado" };
+      setResponseStatus(event, 400);
+      return "Not found.";
     }
     return;
   }

@@ -6,10 +6,10 @@ const isPending = ref<boolean>(false)
 const error = ref<string>()
 
 const { execute, status } = useFetch("/api/login", {
-    method: "POST", immediate: false, body: body, watch: false, async onResponse(res) {
+    method: "POST", immediate: false, body: body, watch: false, onResponse: async (res) => {
 
         if (res.response.status === 200) {
-            await navigateTo("/login", { replace: true })
+            await navigateTo("/panel", { replace: true })
         }
     }
 })
