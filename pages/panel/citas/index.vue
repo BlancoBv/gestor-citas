@@ -4,7 +4,7 @@ import Dialog from 'primevue/dialog';
 definePageMeta({ layout: "panel" })
 
 interface Body { mes: string, year: string, periodo: string, horarios: number[] }
-interface Cita { idCita?: number, fechaCita: string, horarioCita?: { horaTermino: string, horaInicio: string } }
+interface Cita { idCita?: number, fechaCita: string, horarioCita?: { horaTermino: string, horaInicio: string }, estatus: "abierta" | "por_llegar" | "sala_espera" }
 
 const DATE = new Date(Date.now())
 const MESES = [
@@ -21,12 +21,6 @@ const MESES = [
     { id: 11, nombre: "Noviembre" },
     { id: 12, nombre: "Diciembre" },
 ];
-const cmItems = [{
-    label: "Agendar cita", icon: "mdi:plus", command() {
-        //modalAgendar.value?.showModal()
-        visible.value = true
-    }
-}]
 const cm = useTemplateRef("cm");
 const selectedItem = ref<Cita | null>(null);
 const estatusCita = ref<string>("todas")
@@ -58,7 +52,7 @@ const clientesOptions = computed(() => {
 })
 
 
-const { execute: executeAgendar, data: dataCitaA } = await useAsyncData("agendarCita", () => {
+const { execute: executeAgendar } = await useAsyncData("agendarCita", () => {
     return $fetch("/api/agendar-cita", {
         method: "post", query: { idCita: selectedItem.value?.idCita },
         body: { cliente: bodyAgendar.cliente, idServicio: bodyAgendar.idServicio },
@@ -70,6 +64,21 @@ const { execute: executeAgendar, data: dataCitaA } = await useAsyncData("agendar
         }
     })
 }, { immediate: false })
+
+const cmItems = computed(() => {
+    if (selectedItem.value?.estatus === "por_llegar" || selectedItem.value?.estatus === "sala_espera") {
+        return [{
+            label: "Sin opciones", icon: "mdi:emoticon-sad"
+        }]
+    }
+
+    return [{
+        label: "Agendar cita", icon: "mdi:plus", command() {
+            visible.value = true
+        }
+    }]
+})
+
 const filtrarCita = () => {
     refresh()
 }
@@ -85,7 +94,6 @@ const onRowContextMenu = (event: { originalEvent: Event }) => {
 
 </script>
 <template>
-    {{ selectedItem }}
     <Dialog v-model:visible="visible" modal @hide="() => {
         bodyAgendar.cliente = null
         bodyAgendar.idServicio = null
@@ -181,12 +189,13 @@ const onRowContextMenu = (event: { originalEvent: Event }) => {
             <Icon :name="item.icon ?? ''" />
         </template>
     </ContextMenu>
+    {{ estatusCita }}
     <DataTable v-model:contextMenuSelection="selectedItem" :value="data" paginator :rows="5"
         :loading="status === 'pending'" @row-contextmenu="onRowContextMenu" context-menu>
         <Column header="Fecha de la cita" field="fechaCita" sortable />
         <Column header="Horario de la cita" field="horarioCita">
             <template #body="{ data, field }">{{ data[field].horaInicio }} a {{ data[field].horaTermino
-                }}</template>
+            }}</template>
         </Column>
         <Column header="Cliente" field="nombreCliente">
             <template #body="{ data, field }">

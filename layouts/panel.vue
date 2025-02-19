@@ -14,11 +14,11 @@
                     </label>
                 </div>
                 <div class="mx-2 flex-1 px-2">Panel de administracion</div>
-                <div class="hidden flex-none lg:block">
+                <!-- <div class="hidden flex-none lg:block">
                     <ul class="menu menu-horizontal">
                         <li><a>Horarios</a></li>
                     </ul>
-                </div>
+                </div> -->
             </div>
             <!-- Page content here -->
             <slot />
@@ -32,6 +32,12 @@
                 </li>
                 <li>
                     <NuxtLink to="/panel/citas">Citas</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/panel/en-espera">En espera</NuxtLink>
+                </li>
+                <li>
+                    <NuxtLink to="/panel/estadisticas-clientes">Estadisticas de clientes</NuxtLink>
                 </li>
             </ul>
         </div>

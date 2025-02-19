@@ -1,10 +1,11 @@
 <script setup lang="ts">
+definePageMeta({ layout: false })
 
 const { data, execute } = useFetch("/api/citas?estatus=sala_espera")
 
 </script>
 <template>
-    <div class="grid grid-cols-3 h-full">
+    <div class="grid grid-cols-3 h-screen w-screen">
         <div class="flex flex-col items-center col-span-2 p-4 gap-4">
             <div v-for="cita in data" class="stats shadow w-full">
                 <div class="stat place-items-center">

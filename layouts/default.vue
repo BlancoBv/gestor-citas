@@ -13,11 +13,18 @@
                         </svg>
                     </label>
                 </div>
-                <div class="mx-2 flex-1 px-2">Nombre de la marca</div>
+                <div class="mx-2 flex-1 px-2">
+                    <NuxtLink to="/">
+                        Nombre de la marca
+                    </NuxtLink>
+                </div>
                 <div class="hidden flex-none lg:block">
                     <ul class="menu menu-horizontal">
                         <li>
                             <NuxtLink to="/horarios">Horarios</NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink to="/login">Iniciar sesión</NuxtLink>
                         </li>
                     </ul>
                 </div>
@@ -30,6 +37,7 @@
                 <!-- Sidebar content here -->
                 <li>
                     <NuxtLink to="/horarios">Horarios</NuxtLink>
+                    <NuxtLink to="/login">Iniciar sesión</NuxtLink>
                 </li>
             </ul>
         </div>
