@@ -43,3 +43,21 @@
         </div>
     </div>
 </template>
+<style>
+@reference "../assets/app.css";
+
+th[data-pc-section="headercell"] div {
+    display: flex;
+    gap: 1rem;
+}
+
+th[data-p-sortable-column="true"]:hover {
+
+    @apply bg-base-content/10 text-base-content/60 duration-200 ease-in cursor-pointer
+}
+
+th[data-p-sorted="true"] {
+
+    @apply bg-secondary text-secondary-content duration-200 ease-in cursor-pointer
+}
+</style>

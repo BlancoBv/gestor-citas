@@ -44,8 +44,9 @@
     </div>
 </template>
 <style>
+@reference "../assets/app.css";
+
 main {
-    @reference "tailwindcss";
-    @apply p-4
+    @apply p-4;
 }
 </style>
