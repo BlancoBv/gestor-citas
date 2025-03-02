@@ -45,6 +45,7 @@
 </template>
 <style>
 main {
+    @reference "tailwindcss";
     @apply p-4
 }
 </style>
