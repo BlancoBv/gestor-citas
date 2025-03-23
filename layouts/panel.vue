@@ -39,12 +39,15 @@
                 <li>
                     <NuxtLink to="/panel/estadisticas-clientes">Estadisticas de clientes</NuxtLink>
                 </li>
+                <li>
+                    <NuxtLink to="/panel/servicios">Servicios</NuxtLink>
+                </li>
             </ul>
         </div>
     </div>
 </template>
 <style>
-@reference "../assets/app.css";
+@reference "~/assets/app.css";
 
 th[data-pc-section="headercell"] div {
     display: flex;

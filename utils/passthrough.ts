@@ -50,16 +50,16 @@ const PT = {
   chip: {
     root: "flex bg-base-200 gap-4 items-center p-1 rounded-btn",
   },
-  dialog: {
-    root: "modal-box transform-none",
-    mask: { class: "bg-[#0006]" },
-    header: "grid grid-cols-2",
-    title: "text-lg font-bold",
-    headeractions: "flex items-center justify-end",
-    pcclosebutton: {
-      root: "btn btn-sm btn-circle btn-ghost text-center",
-      label: "hidden",
-    },
-  },
+  /*   dialog: {
+      root: "modal-box transform-none",
+      mask: { class: "modal modal-open" },
+      header: "grid grid-cols-2",
+      title: "text-lg font-bold",
+      headeractions: "flex items-center justify-end",
+      pcclosebutton: {
+        root: "btn btn-sm btn-circle btn-ghost text-center",
+        label: "hidden",
+      },
+    }, */
 };
 export default PT;

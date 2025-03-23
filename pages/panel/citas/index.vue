@@ -22,6 +22,7 @@ const MESES = [
     { id: 12, nombre: "Diciembre" },
 ];
 const cm = useTemplateRef("cm");
+const modalR = useTemplateRef("modal");
 const selectedItem = ref<Cita | null>(null);
 const estatusCita = ref<string>("todas")
 const visible = ref<boolean>(false)
@@ -94,34 +95,47 @@ const onRowContextMenu = (event: { originalEvent: Event }) => {
 
 </script>
 <template>
-    <Dialog v-model:visible="visible" modal @hide="() => {
+    <Dialog v-model:visible="visible" ref="modal" modal @hide="() => {
         bodyAgendar.cliente = null
         bodyAgendar.idServicio = null
     }">
-        <form class="grid grid-cols-1 place-items-center gap-4" @submit.prevent="agendarCita">
-            <input v-model="bodyAgendar.cliente" />
-            <label class="form-control w-full max-w-xs">
-                <div class="label">
-                    <span class="label-text">Cliente</span>
-                </div>
-                <Select v-model="bodyAgendar.cliente" placeholder="Ingresa o selecciona el nombre un cliente"
-                    :options="clientesOptions" editable option-value="value" option-label="label" />
+        <template #container="{ closeCallback }">
 
-            </label>
-            <label class="form-control w-full max-w-xs">
-                <div class="label">
-                    <span class="label-text">Cliente</span>
-                </div>
-                <Select v-model="bodyAgendar.idServicio" filter placeholder="Selecciona un servicio"
-                    :options="clientesOptions" option-value="value" option-label="label" />
+            <div class="modal modal-open">
+                <div class="modal-box">
 
-            </label>
-            <div class="flex justify-end gap-2 w-full">
-                <button class="btn btn-primary" type="submit"
-                    :disabled="bodyAgendar.cliente === null || bodyAgendar.idServicio === null">Enviar</button>
+                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                        @click="closeCallback">✕</button>
+
+                    <h3 class="text-lg font-bold">Hello!</h3>
+                    <form class="grid grid-cols-1 place-items-center gap-4" @submit.prevent="agendarCita">
+                        <label class="form-control w-full max-w-xs">
+                            <div class="label">
+                                <span class="label-text">Cliente</span>
+                            </div>
+                            <Select v-model="bodyAgendar.cliente"
+                                placeholder="Ingresa o selecciona el nombre un cliente" :options="clientesOptions"
+                                editable option-value="value" option-label="label" />
+
+                        </label>
+                        <label class="form-control w-full max-w-xs">
+                            <div class="label">
+                                <span class="label-text">Cliente</span>
+                            </div>
+                            <Select v-model="bodyAgendar.idServicio" filter placeholder="Selecciona un servicio"
+                                :options="clientesOptions" option-value="value" option-label="label" />
+
+                        </label>
+                        <div class="flex justify-end gap-2 w-full">
+                            <button class="btn btn-primary" type="submit"
+                                :disabled="bodyAgendar.cliente === null || bodyAgendar.idServicio === null">Enviar</button>
+                        </div>
+
+                    </form>
+                </div>
             </div>
 
-        </form>
+        </template>
     </Dialog>
     <form @submit.prevent="crearCita">
         Generar citas abiertas

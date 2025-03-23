@@ -118,4 +118,7 @@ Citas.belongsTo(Clientes, { foreignKey: "idCliente", as: "clienteCita" });
 Horarios.hasOne(Citas, { foreignKey: "idHorario" });
 Citas.belongsTo(Horarios, { foreignKey: "idHorario", as: "horarioCita" });
 
-export { Citas, Clientes, Horarios, Usuarios };
+Servicios.hasMany(Citas, { foreignKey: "idServicio" });
+Citas.belongsTo(Servicios, { foreignKey: "idServicio", as: "servicioCita" });
+
+export { Citas, Clientes, Horarios, Usuarios, Servicios };
