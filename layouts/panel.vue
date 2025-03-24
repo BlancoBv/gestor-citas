@@ -3,7 +3,7 @@
     <div class="drawer lg:drawer-open">
         <input id="drawer" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col">
-            <div class="navbar bg-base-300 w-full">
+            <div class="navbar bg-base-300 w-full print:hidden">
                 <div class="flex-none lg:hidden">
                     <label for="drawer" aria-label="open sidebar" class="btn btn-square btn-ghost">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

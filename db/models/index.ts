@@ -51,10 +51,11 @@ Citas.init(
     fechaCita: { type: DataTypes.DATEONLY, allowNull: false },
     idServicio: { type: DataTypes.INTEGER },
     estatus: {
-      type: DataTypes.ENUM("abierta", "por_llegar", "sala_espera"),
+      type: DataTypes.ENUM("abierta", "por_llegar", "sala_espera", "cancelada"),
       allowNull: false,
     },
     nombreCliente: { type: DataTypes.STRING(100) },
+    costo: { type: DataTypes.DECIMAL(6, 2) },
     createdAt: { type: DataTypes.DATE },
     updatedAt: { type: DataTypes.DATE },
   },

@@ -17,6 +17,7 @@ export default class CitasModel extends Model<
   declare idServicio: ForeignKey<number | null>;
   declare estatus: string;
   declare nombreCliente: string | null;
+  declare costo: number | null;
   declare createdAt: CreationOptional<string>;
   declare updatedAt: CreationOptional<string>;
 }
