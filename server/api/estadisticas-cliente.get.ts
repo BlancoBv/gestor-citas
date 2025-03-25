@@ -4,13 +4,17 @@ interface response {
     citasTotales: number;
     frecuenciaHorarios: { [key: string]: number };
     frecuenciaServicios: { [key: string]: number };
-    cliente: { nombreCompleto: string, numTelefono: string }
+    recaudacionServicios: { [key: string]: number };
+    cliente: { nombreCompleto: string, numTelefono: string };
+    recaudacionTotal: number
 };
 
 export default defineEventHandler(async (event) => {
     const { id } = getQuery(event);
     const frecuenciaHorarios: { [key: string]: number } = {};
     const frecuenciaServicios: { [key: string]: number } = {};
+    const recaudacionServicios: { [key: string]: number } = {};
+    let recaudacionTotal: number = 0;
 
     const controller = new ControllerBuilder();
 
@@ -37,18 +41,29 @@ export default defineEventHandler(async (event) => {
     citas.forEach(el => {
         const keyHorario = `${el.horarioCita.horaInicio} - ${el.horarioCita.horaTermino}`;
         const keyServicio = el.servicioCita.nombre;
+
+        recaudacionTotal += Number(el.costo ?? 0); //realiza la sumatoria de todos los costos presentes
+        //frecuencia de horarios
         if (frecuenciaHorarios[keyHorario]) {
             frecuenciaHorarios[keyHorario] += 1
         } else {
             frecuenciaHorarios[keyHorario] = 1
         }
-        //para la frecuencia de servicios
+        //para la frecuencia de servicios y recaudaciones
         if (frecuenciaServicios[keyServicio]) {
-            frecuenciaServicios[keyServicio] += 1
+            frecuenciaServicios[keyServicio] += 1;
+            recaudacionServicios[keyServicio] += Number(el.costo ?? 0);
         } else {
-            frecuenciaServicios[keyServicio] = 1
+            frecuenciaServicios[keyServicio] = 1;
+            recaudacionServicios[keyServicio] = Number(el.costo ?? 0)
         }
     });
 
-    return { citasTotales: citas.length, frecuenciaHorarios, frecuenciaServicios, cliente: { nombreCompleto: cliente.nombreCompleto, numTelefono: cliente.numTelefono } } satisfies response;
+    return {
+        citasTotales: citas.length,
+        frecuenciaHorarios, frecuenciaServicios,
+        cliente: { nombreCompleto: cliente.nombreCompleto, numTelefono: cliente.numTelefono },
+        recaudacionServicios,
+        recaudacionTotal
+    } satisfies response;
 })

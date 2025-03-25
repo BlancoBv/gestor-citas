@@ -1,6 +1,8 @@
 <script setup lang="ts">
-const props = defineProps<{ data: any, titulo?: string }>()
+const props = defineProps<{ data: any; titulo?: string; colSpan?: number }>()
 const chartOptions = ref();
+const chartData = ref()
+const colSpan = ref<number | undefined>(props.colSpan)
 
 const setChartOptions = () => {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -40,12 +42,20 @@ const setChartOptions = () => {
         }
     };
 }
+
+const classList = computed(() => {
+    if (colSpan.value !== undefined) {
+        return `h-96 col-span-${colSpan.value}`
+    }
+    return "h-96"
+})
 onMounted(() => {
-    chartOptions.value = setChartOptions();
+    chartData.value = props.data
+    chartOptions.value = setChartOptions()
 });
 </script>
 <template>
-    <Chart ref="chart" type="pie" :data="props.data" :options="chartOptions" class="h-96" />
+    <Chart ref="chart" type="pie" :data="chartData" :options="chartOptions" :class="classList" />
 </template>
 <!-- <script setup lang="ts">
 import { Chart as ChartJS } from "chart.js";
