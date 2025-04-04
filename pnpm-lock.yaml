@@ -38,6 +38,9 @@ importers:
       chart.js:
         specifier: ^4.4.8
         version: 4.4.8
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       lucia:
         specifier: ^3.2.2
         version: 3.2.2
@@ -87,6 +90,9 @@ importers:
       '@types/bcrypt':
         specifier: ^5.0.2
         version: 5.0.2
+      '@types/lodash':
+        specifier: ^4.17.16
+        version: 4.17.16
       daisyui:
         specifier: ^5.0.0
         version: 5.0.0
@@ -976,8 +982,8 @@ packages:
   '@types/http-proxy@1.17.15':
     resolution: {integrity: sha512-25g5atgiVNTIv0LBDTg1H74Hvayx0ajtJPLLcYE3whFv75J0pWNtOBzaXJQgDTmrX1bx5U9YC2w/n65BN1HwRQ==}
 
-  '@types/lodash@4.17.15':
-    resolution: {integrity: sha512-w/P33JFeySuhN6JLkysYUK2gEmy9kHHFN7E8ro0tkfmlDOgxBDzWEZ/J8cWA+fHqFevpswDTFZnDx+R9lbL6xw==}
+  '@types/lodash@4.17.16':
+    resolution: {integrity: sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==}
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
@@ -4591,7 +4597,7 @@ snapshots:
     dependencies:
       '@types/node': 22.10.10
 
-  '@types/lodash@4.17.15': {}
+  '@types/lodash@4.17.16': {}
 
   '@types/ms@2.1.0': {}
 
@@ -7179,7 +7185,7 @@ snapshots:
   v-calendar@3.1.2(@popperjs/core@2.11.8)(vue@3.5.13(typescript@5.7.3)):
     dependencies:
       '@popperjs/core': 2.11.8
-      '@types/lodash': 4.17.15
+      '@types/lodash': 4.17.16
       '@types/resize-observer-browser': 0.1.11
       date-fns: 2.30.0
       date-fns-tz: 2.0.1(date-fns@2.30.0)

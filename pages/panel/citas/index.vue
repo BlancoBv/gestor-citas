@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import Dialog from 'primevue/dialog';
-
 definePageMeta({ layout: "panel" })
 
 interface Body { mes: string, year: string, periodo: string, horarios: number[] }
@@ -26,18 +24,29 @@ const modalR = useTemplateRef("modal");
 const selectedItem = ref<Cita | null>(null);
 const estatusCita = ref<string>("todas")
 const visible = ref<boolean>(false)
-const body = reactive<Body>({ mes: "", year: formatDate(DATE, "YYYY"), periodo: "", horarios: [] })
+const mes = ref<string>(formatDate(DATE, "M"))
+const year = ref<string>(formatDate(DATE, "YYYY"))
+const horarios = ref<number[]>([])
+
+//const body = reactive<Body>({ mes: "", year: formatDate(DATE, "YYYY"), periodo: "", horarios: [] })
 const bodyAgendar = reactive<{ cliente: string | null | number, idServicio: number | null }>({ cliente: null, idServicio: null })
+
+const body = computed(() => {
+    return { mes: mes.value, year: year.value, horarios: horarios.value }
+})
 
 const { data, status, refresh } = useFetch("/api/citas", { query: { estatus: estatusCita }, watch: false })
 const { execute } = useFetch("/api/citas", {
-    method: "post", body, watch: false, immediate: false, onResponse(res) {
+    method: "post",
+    body,
+    watch: false, immediate: false,
+    onResponse(res) {
         if (res.response.status == 200) { refresh() }
     }
 })
 const { data: dataClientes, status: statusClientes } = useFetch("/api/clientes")
 
-const { data: dataHorarios, status: statusHorarios } = useFetch("/api/horarios")
+const { data: dataHorarios, status: statusHorarios } = useFetch("/api/horarios-agendar", { query: { mes, year } })
 
 const horariosOptions = computed(() => {
     if (statusHorarios.value === "success") {
@@ -84,6 +93,10 @@ const filtrarCita = () => {
     refresh()
 }
 const crearCita = () => {
+    if (horarios.value.length === 0) {
+        return
+    }
+    console.log(horarios.value)
     execute()
 }
 const agendarCita = () => {
@@ -95,56 +108,64 @@ const onRowContextMenu = (event: { originalEvent: Event }) => {
 
 </script>
 <template>
-    <Dialog v-model:visible="visible" ref="modal" modal @hide="() => {
-        bodyAgendar.cliente = null
-        bodyAgendar.idServicio = null
-    }">
-        <template #container="{ closeCallback }">
+    <main class="p-4">
+        <Dialog v-model:visible="visible" ref="modal" modal @hide="() => {
+            bodyAgendar.cliente = null
+            bodyAgendar.idServicio = null
+        }">
+            <template #container="{ closeCallback }">
 
-            <div class="modal modal-open">
-                <div class="modal-box">
+                <div class="modal modal-open">
+                    <div class="modal-box">
 
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                        @click="closeCallback">✕</button>
+                        <button class="btn btn-circle btn-ghost absolute right-2 top-2"
+                            @click="closeCallback">✕</button>
 
-                    <h3 class="text-lg font-bold">Hello!</h3>
-                    <form class="grid grid-cols-1 place-items-center gap-4" @submit.prevent="agendarCita">
-                        <label class="form-control w-full max-w-xs">
-                            <div class="label">
-                                <span class="label-text">Cliente</span>
+                        <h3 class="text-lg font-bold">Hello!</h3>
+                        <form class="grid grid-cols-1 place-items-center gap-4" @submit.prevent="agendarCita">
+                            <label class="form-control w-full max-w-xs">
+                                <div class="label">
+                                    <span class="label-text">Cliente</span>
+                                </div>
+                                <Select v-model="bodyAgendar.cliente"
+                                    placeholder="Ingresa o selecciona el nombre un cliente" :options="clientesOptions"
+                                    editable option-value="value" option-label="label" />
+
+                            </label>
+                            <label class="form-control w-full max-w-xs">
+                                <div class="label">
+                                    <span class="label-text">Cliente</span>
+                                </div>
+                                <Select v-model="bodyAgendar.idServicio" filter placeholder="Selecciona un servicio"
+                                    :options="clientesOptions" option-value="value" option-label="label" />
+
+                            </label>
+                            <div class="flex justify-end gap-2 w-full">
+                                <button class="btn btn-primary" type="submit"
+                                    :disabled="bodyAgendar.cliente === null || bodyAgendar.idServicio === null">Enviar</button>
                             </div>
-                            <Select v-model="bodyAgendar.cliente"
-                                placeholder="Ingresa o selecciona el nombre un cliente" :options="clientesOptions"
-                                editable option-value="value" option-label="label" />
 
-                        </label>
-                        <label class="form-control w-full max-w-xs">
-                            <div class="label">
-                                <span class="label-text">Cliente</span>
-                            </div>
-                            <Select v-model="bodyAgendar.idServicio" filter placeholder="Selecciona un servicio"
-                                :options="clientesOptions" option-value="value" option-label="label" />
-
-                        </label>
-                        <div class="flex justify-end gap-2 w-full">
-                            <button class="btn btn-primary" type="submit"
-                                :disabled="bodyAgendar.cliente === null || bodyAgendar.idServicio === null">Enviar</button>
-                        </div>
-
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-        </template>
-    </Dialog>
-    <form @submit.prevent="crearCita">
-        Generar citas abiertas
-        <div class="flex gap-4">
+            </template>
+        </Dialog>
+        <h1 class="flex gap-4 font-bold">Generar citas abiertas <div class="tooltip"
+                data-tip="Genera las citas en el mes y año seleccionado.">
+                <button class="btn btn-ghost btn-circle btn-xs">
+                    <Icon name="mdi:information-variant-circle" />
+                </button>
+            </div>
+        </h1>
+        <form @submit.prevent="crearCita" class="grid grid-cols-4 gap-4 place-items-end">
+
+
             <label class="form-control w-full max-w-xs">
                 <div class="label">
                     <span class="label-text">Mes</span>
                 </div>
-                <select class="select select-bordered" v-model="body.mes" required>
+                <select class="select select-bordered" v-model="mes" required>
                     <option disabled selected value="">Selecciona un mes</option>
                     <option v-for="mes in MESES" :value="mes.id">{{ mes.nombre }}</option>
                 </select>
@@ -154,12 +175,12 @@ const onRowContextMenu = (event: { originalEvent: Event }) => {
                 <div class="label">
                     <span class="label-text">Año</span>
                 </div>
-                <select class="select select-bordered" v-model="body.year" required>
+                <select class="select select-bordered" v-model="year" required>
                     <option disabled selected value="">Selecciona un año</option>
                     <option :value="body.year">{{ body.year }}</option>
                 </select>
             </label>
-            <label class="form-control w-full max-w-xs">
+            <!--             <label class="form-control w-full max-w-xs">
                 <div class="label">
                     <span class="label-text">Rango de tiempo</span>
                 </div>
@@ -169,66 +190,68 @@ const onRowContextMenu = (event: { originalEvent: Event }) => {
                     <option value="quincena">Quincena (15 días)</option>
                     <option value="mes">Mes (30 días)</option>
                 </select>
-            </label>
+            </label> -->
             <div class="form-control w-full max-w-xs">
                 <div class="label">
-                    <span class="label-text">Rango de tiempo</span>
+                    <span class="label-text">Horarios</span>
                 </div>
-                <MultiSelect v-model="body.horarios" :options="horariosOptions" option-label="label"
-                    option-value="value" :maxSelectedLabels="3" display="chip" placeholder="Seleccione los horarios" />
+                <MultiSelect v-model="horarios" :options="horariosOptions" option-label="label" option-value="value"
+                    :maxSelectedLabels="3" display="chip" placeholder="Seleccione los horarios"
+                    :loading="statusHorarios === 'pending'" />
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Crear citas</button>
 
-    </form>
-    <div class="divider"></div>
-    <form @submit.prevent="filtrarCita" class="flex gap-4 items-end justify-end">
-        <label class="form-control w-full max-w-xs">
-            <div class="label">
-                <span class="label-text">Estatus de la citas</span>
-            </div>
-            <select class="select select-bordered" v-model="estatusCita">
-                <option disabled selected value="">Selecciona un estatus</option>
-                <option value="todas">Todas las citas</option>
-                <option value="abierta">Abiertas</option>
-                <option value="por_llegar">Por llegar</option>
-                <option value="sala_espera">En sala de espera</option>
-            </select>
-        </label>
-        <button class="btn btn-primary">Filtrar</button>
-    </form>
+            <button type="submit" class="btn btn-primary btn-block">Generar citas</button>
 
-    <ContextMenu ref="cm" :model="cmItems">
-        <template #itemicon="{ item }">
-            <Icon :name="item.icon ?? ''" />
-        </template>
-    </ContextMenu>
-    {{ estatusCita }}
-    <DataTable v-model:contextMenuSelection="selectedItem" :value="data" paginator :rows="5"
-        :loading="status === 'pending'" @row-contextmenu="onRowContextMenu" context-menu>
-        <Column header="Fecha de la cita" field="fechaCita" sortable />
-        <Column header="Horario de la cita" field="horarioCita">
-            <template #body="{ data, field }">{{ data[field].horaInicio }} a {{ data[field].horaTermino
-            }}</template>
-        </Column>
-        <Column header="Cliente" field="nombreCliente">
-            <template #body="{ data, field }">
-                <template v-if="data.estatus === 'abierta'">Sin asignar.</template>
-                <template v-else-if="data[field] && !data.clienteCita">{{ data[field] }}</template>
-                <template v-else> {{ data.clienteCita.nombreCompleto }}</template>
+        </form>
+        <div class="divider"></div>
+        <form @submit.prevent="filtrarCita" class="flex gap-4 items-end justify-end">
+            <label class="form-control w-full max-w-xs">
+                <div class="label">
+                    <span class="label-text">Estatus de la citas</span>
+                </div>
+                <select class="select select-bordered" v-model="estatusCita">
+                    <option disabled selected value="">Selecciona un estatus</option>
+                    <option value="todas">Todas las citas</option>
+                    <option value="abierta">Abiertas</option>
+                    <option value="por_llegar">Por llegar</option>
+                    <option value="sala_espera">En sala de espera</option>
+                </select>
+            </label>
+            <button class="btn btn-primary">Filtrar</button>
+        </form>
+
+        <ContextMenu ref="cm" :model="cmItems">
+            <template #itemicon="{ item }">
+                <Icon :name="item.icon ?? ''" />
             </template>
-        </Column>
-        <Column header="Estatus" field="estatus">
-            <template #body="{ data, field }">
-                <template v-if="data[field] === 'abierta'">Abierta</template>
-                <template v-if="data[field] === 'por_llegar'">Por llegar</template>
-                <template v-if="data[field] === 'sala_espera'">En sala de espera</template>
+        </ContextMenu>
+        {{ body.horarios }}
+        <DataTable v-model:contextMenuSelection="selectedItem" :value="data" paginator :rows="5"
+            :loading="status === 'pending'" @row-contextmenu="onRowContextMenu" context-menu>
+            <Column header="Fecha de la cita" field="fechaCita" sortable />
+            <Column header="Horario de la cita" field="horarioCita">
+                <template #body="{ data, field }">{{ data[field].horaInicio }} a {{ data[field].horaTermino
+                }}</template>
+            </Column>
+            <Column header="Cliente" field="nombreCliente">
+                <template #body="{ data, field }">
+                    <template v-if="data.estatus === 'abierta'">Sin asignar.</template>
+                    <template v-else-if="data[field] && !data.clienteCita">{{ data[field] }}</template>
+                    <template v-else> {{ data.clienteCita.nombreCompleto }}</template>
+                </template>
+            </Column>
+            <Column header="Estatus" field="estatus">
+                <template #body="{ data, field }">
+                    <template v-if="data[field] === 'abierta'">Abierta</template>
+                    <template v-if="data[field] === 'por_llegar'">Por llegar</template>
+                    <template v-if="data[field] === 'sala_espera'">En sala de espera</template>
+                </template>
+            </Column>
+            <template #empty>
+                <p class=" font-bold">Sin datos.</p>
             </template>
-        </Column>
-        <template #empty>
-            <p class=" font-bold">Sin datos.</p>
-        </template>
 
-    </DataTable>
+        </DataTable>
 
+    </main>
 </template>

@@ -26,6 +26,13 @@ export default defineEventHandler(async (event) => {
 
   const controller = new ControllerBuilder();
 
+  if (body.mes === undefined || body.year === undefined) {
+    throw createError({
+      statusCode: 400,
+      fatal: true,
+      message: "Año o mes no especificados",
+    });
+  }
   const citasLista = await controller
     .setModel(Citas)
     .setWhereFilters({

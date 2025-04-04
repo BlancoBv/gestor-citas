@@ -15,6 +15,5 @@ export default function (array: any[] | null, property: string) {
     }
   });
 
-  console.log(tempObject);
   return tempObject;
 }
